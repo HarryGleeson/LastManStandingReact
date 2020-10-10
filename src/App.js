@@ -1,12 +1,30 @@
 import React, { Component } from "react";
-import GetFixtures from "./GetFixtures";
 import "./App.css";
+
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  Link,
+  Redirect,
+} from "react-router-dom";
+
+//Pages
+import GetFixtures from "./pages/index";
+import Submit from "./pages/submit";
+import NotFoundPage from "./pages/404";
 
 function App() {
   return (
     <div className="app">
-      <h1>This Weeks Fixtures</h1>
-      <GetFixtures />
+      <Router>
+        <Switch>
+          <Route exact path="/" component={GetFixtures} />
+          <Route exact path="/submit" component={Submit} />
+          <Route exact path="/404" component={NotFoundPage} />
+          <Redirect to="/404" />
+        </Switch>
+      </Router>
     </div>
   );
 }

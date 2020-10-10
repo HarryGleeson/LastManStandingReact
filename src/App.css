@@ -10,3 +10,14 @@
   border: 30px;
   align-items: center;
 }
+
+.fixturesList {
+  margin-top: 4px;
+}
+
+.HomeSelectorButton {
+  padding-left: 10px;
+  padding-right: 20px;
+  padding-top: 30px;
+  padding-bottom: 10px;
+}
