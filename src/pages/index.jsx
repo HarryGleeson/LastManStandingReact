@@ -41,7 +41,7 @@ class GetFixtures extends React.Component {
                   onClick={() => {
                     this.setState({ currentSelection: item.home_name });
                   }}
-                  className="btn btn-secondary btn-sm"
+                  className="btn btn-secondary btn-sm mr-1 ml-1"
                 >
                   {item.home_name}
                 </button>
@@ -50,7 +50,7 @@ class GetFixtures extends React.Component {
                   onClick={() => {
                     this.setState({ currentSelection: item.away_name });
                   }}
-                  className="btn btn-secondary btn-sm"
+                  className="btn btn-secondary btn-sm mr-1 ml-1"
                 >
                   {item.away_name}
                 </button>
@@ -67,7 +67,12 @@ class GetFixtures extends React.Component {
               },
             }}
           >
-            <button className="btn btn-primary btn-sm">Submit</button>
+            <button
+              disabled={!this.state.currentSelection}
+              className="btn btn-primary btn-sm ml-1"
+            >
+              Submit
+            </button>
           </Link>
         </div>
       );
