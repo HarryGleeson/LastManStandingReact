@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useState } from "react";
 import "./App.css";
 
 import {
@@ -15,6 +15,8 @@ import Submit from "./pages/submit";
 import NotFoundPage from "./pages/404";
 
 function App() {
+  const [teamName, setTeamName] = useState("");
+  const [beenSelected, setBeenSelected] = useState("");
   return (
     <div className="app">
       <Router>

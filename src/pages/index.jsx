@@ -1,5 +1,8 @@
 import React, { Component } from "react";
+import Axios from "axios";
+import useEffect from "react";
 import { Link } from "react-router-dom";
+
 import "../App.css";
 
 class GetFixtures extends React.Component {
@@ -24,6 +27,15 @@ class GetFixtures extends React.Component {
         });
       });
   }
+
+  submitTeam = () => {
+    Axios.post("http://localhost:3001/api/insert", {
+      teamName: this.state.currentSelection,
+      beenSelected: 0,
+    }).then(() => {
+      alert("successful insert");
+    });
+  };
 
   render() {
     var { isLoaded, items } = this.state;
@@ -68,6 +80,7 @@ class GetFixtures extends React.Component {
             }}
           >
             <button
+              onClick={this.submitTeam}
               disabled={!this.state.currentSelection}
               className="btn btn-primary btn-sm ml-1"
             >
