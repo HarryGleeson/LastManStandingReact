@@ -1,6 +1,5 @@
-import React, { Component } from "react";
+import React, { Component, useEffect } from "react";
 import Axios from "axios";
-import useEffect from "react";
 import { Link } from "react-router-dom";
 
 import "../App.css";
@@ -12,6 +11,7 @@ class GetFixtures extends React.Component {
       items: [],
       isLoaded: false,
       currentSelection: "",
+      hasBeenSelected: 0,
     };
   }
 
@@ -23,22 +23,39 @@ class GetFixtures extends React.Component {
       .then((json) => {
         this.setState({
           isLoaded: true,
-          items: json,
+          fixtureList: json,
         });
       });
   }
 
+  hasTeamBeenSelected = (teamName) => {
+    Axios.get("http://localhost:3001/api/get", {
+      params: {
+        teamName: teamName,
+      },
+    }).then((response) => {
+      return response.data[0].beenSelected;
+    });
+  };
+
   submitTeam = () => {
     Axios.post("http://localhost:3001/api/insert", {
       teamName: this.state.currentSelection,
-      beenSelected: 0,
+      beenSelected: 1,
     }).then(() => {
       alert("successful insert");
     });
   };
 
   render() {
-    var { isLoaded, items } = this.state;
+    var {
+      isLoaded,
+      fixtureList,
+      currentSelection,
+      hasBeenSelected,
+    } = this.state;
+    var homeDisplay = 0;
+    var awayDisplay = 0;
     if (!isLoaded) {
       return <div>Loading...</div>;
     } else {
@@ -46,36 +63,40 @@ class GetFixtures extends React.Component {
         <div className="GetFixtures">
           <h1>This Weeks Fixtures</h1>
           <ul>
-            {items.data.fixtures.map((item) => (
-              <li className="fixturesList" key={item.id}>
-                {item.date} - {item.time}
+            {fixtureList.data.fixtures.map((fixture) => (
+              <li className="fixturesList" key={fixture.id}>
+                {fixture.date} - {fixture.time}
+                {this.hasTeamBeenSelected(fixture.home_name)}
                 <button
                   onClick={() => {
-                    this.setState({ currentSelection: item.home_name });
+                    this.setState({ currentSelection: fixture.home_name });
                   }}
                   className="btn btn-secondary btn-sm mr-1 ml-1"
+                  disabled={0}
                 >
-                  {item.home_name}
+                  {fixture.home_name}
                 </button>
                 vs
+                {this.hasTeamBeenSelected(fixture.away_name)}
                 <button
                   onClick={() => {
-                    this.setState({ currentSelection: item.away_name });
+                    this.setState({ currentSelection: fixture.away_name });
                   }}
                   className="btn btn-secondary btn-sm mr-1 ml-1"
+                  disabled={0}
                 >
-                  {item.away_name}
+                  {fixture.away_name}
                 </button>
               </li>
             ))}
           </ul>
-          Current Selection: {this.state.currentSelection}
+          Current Selection: {currentSelection}
           <Link
             to={{
               pathname: "/submit",
               className: "btn btn-secondary btn-sm",
               state: {
-                selection: this.state.currentSelection,
+                selection: currentSelection,
               },
             }}
           >
