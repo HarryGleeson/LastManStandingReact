@@ -33,6 +33,7 @@ class GetFixtures extends React.Component {
         this.state.fixtureList.forEach((fixture) => {
           let toBeReversed = false;
           if (fixture.home_name > fixture.away_name) {
+            //database query returns teams in alphabetical order, need to reverse if away team first in alphabet
             toBeReversed = true;
           }
           Axios.get("http://localhost:3001/api/get", {
