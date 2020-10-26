@@ -17,10 +17,10 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get("/api/get", (req, res) => {
-  const teamName = req.query.teamName;
-
-  const sqlSelect = "SELECT * FROM Teams WHERE teamName = ?";
-  db.query(sqlSelect, [teamName], (err, result) => {
+  const homeName = req.query.homeName;
+  const awayName = req.query.awayName;
+  const sqlSelect = "SELECT * FROM Teams WHERE teamName = ? OR teamName = ?";
+  db.query(sqlSelect, [homeName, awayName], (err, result) => {
     res.send(result);
   });
 });

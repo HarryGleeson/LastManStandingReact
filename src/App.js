@@ -1,11 +1,10 @@
-import React, { Component, useState } from "react";
+import React from "react";
 import "./App.css";
 
 import {
   BrowserRouter as Router,
   Route,
   Switch,
-  Link,
   Redirect,
 } from "react-router-dom";
 
@@ -15,8 +14,6 @@ import Submit from "./pages/submit";
 import NotFoundPage from "./pages/404";
 
 function App() {
-  const [teamName, setTeamName] = useState("");
-  const [beenSelected, setBeenSelected] = useState("");
   return (
     <div className="app">
       <Router>
