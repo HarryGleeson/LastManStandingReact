@@ -1,6 +1,5 @@
 import React from "react";
 import Axios from "axios";
-import { Link } from "react-router-dom";
 
 import "../App.css";
 
@@ -29,7 +28,13 @@ class GetFixtures extends React.Component {
         });
       })
       .then(() => {
+        let homeSelected = 0;
+        let awaySelected = 0;
         this.state.fixtureList.forEach((fixture) => {
+          let toBeReversed = false;
+          if (fixture.home_name > fixture.away_name) {
+            toBeReversed = true;
+          }
           Axios.get("http://localhost:3001/api/get", {
             params: {
               homeName: fixture.home_name,
@@ -37,9 +42,17 @@ class GetFixtures extends React.Component {
             },
           })
             .then((response) => {
+              if (toBeReversed) {
+                homeSelected = response.data[1].beenSelected;
+                awaySelected = response.data[0].beenSelected;
+              } else {
+                homeSelected = response.data[0].beenSelected;
+                awaySelected = response.data[1].beenSelected;
+              }
+              console.log(homeSelected, awaySelected);
               this.setState({
-                hasBeenSelectedHome: response.data[0].beenSelected,
-                hasBeenSelectedAway: response.data[1].beenSelected,
+                hasBeenSelectedHome: homeSelected,
+                hasBeenSelectedAway: awaySelected,
               });
             })
             .then(() => {
@@ -66,6 +79,8 @@ class GetFixtures extends React.Component {
     }).then(() => {
       alert("successful insert");
     });
+
+    window.location.reload(false);
   };
 
   render() {
@@ -103,23 +118,13 @@ class GetFixtures extends React.Component {
             ))}
           </ul>
           Current Selection: {currentSelection}
-          <Link
-            to={{
-              pathname: "/submit",
-              className: "btn btn-secondary btn-sm",
-              state: {
-                selection: currentSelection,
-              },
-            }}
+          <button
+            onClick={this.submitTeam}
+            disabled={!this.state.currentSelection}
+            className="btn btn-primary btn-sm ml-1"
           >
-            <button
-              onClick={this.submitTeam}
-              disabled={!this.state.currentSelection}
-              className="btn btn-primary btn-sm ml-1"
-            >
-              Submit
-            </button>
-          </Link>
+            Submit
+          </button>
         </div>
       );
     }

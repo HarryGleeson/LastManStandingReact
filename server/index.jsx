@@ -28,10 +28,9 @@ app.get("/api/get", (req, res) => {
 app.post("/api/insert", (req, res) => {
   const teamName = req.body.teamName;
   const beenSelected = req.body.beenSelected;
-
   const sqlUpdate = "UPDATE Teams SET beenSelected = ? WHERE teamName = ?;";
   db.query(sqlUpdate, [beenSelected, teamName], (err, result) => {
-    console.log(err);
+    console.log("Selected:" + teamName);
   });
 });
 
