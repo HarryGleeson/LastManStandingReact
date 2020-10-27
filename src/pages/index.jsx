@@ -1,5 +1,6 @@
 import React from "react";
 import Axios from "axios";
+import { Link } from "react-router-dom";
 
 import "../App.css";
 
@@ -18,7 +19,9 @@ class GetFixtures extends React.Component {
 
   componentDidMount() {
     const week = 7;
-    const url = `https://livescore-api.com/api-client/fixtures/matches.json?competition_id=2&round=${week}&key=pRzsdYttAIYZCtvl&secret=p1eh5O8oqpcDmtaLkJdyIH2jp1i2vNoU`;
+    const key = process.env.REACT_APP_API_KEY;
+    const secret = process.env.REACT_APP_API_SECRET_KEY;
+    const url = `https://cors-anywhere.herokuapp.com/livescore-api.com/api-client/fixtures/matches.json?competition_id=2&round=${week}&key=${key}&secret=${secret}`;
     fetch(url)
       .then((res) => res.json())
       .then((json) => {
@@ -50,7 +53,6 @@ class GetFixtures extends React.Component {
                 homeSelected = response.data[0].beenSelected;
                 awaySelected = response.data[1].beenSelected;
               }
-              console.log(homeSelected, awaySelected);
               this.setState({
                 hasBeenSelectedHome: homeSelected,
                 hasBeenSelectedAway: awaySelected,
@@ -80,8 +82,6 @@ class GetFixtures extends React.Component {
     }).then(() => {
       alert("successful insert");
     });
-
-    window.location.reload(false);
   };
 
   render() {
@@ -119,13 +119,23 @@ class GetFixtures extends React.Component {
             ))}
           </ul>
           Current Selection: {currentSelection}
-          <button
-            onClick={this.submitTeam}
-            disabled={!this.state.currentSelection}
-            className="btn btn-primary btn-sm ml-1"
+          <Link
+            to={{
+              pathname: "/submit",
+              className: "btn btn-secondary btn-sm",
+              state: {
+                selection: currentSelection,
+              },
+            }}
           >
-            Submit
-          </button>
+            <button
+              onClick={this.submitTeam}
+              disabled={!this.state.currentSelection}
+              className="btn btn-primary btn-sm ml-1"
+            >
+              Submit
+            </button>
+          </Link>
         </div>
       );
     }
