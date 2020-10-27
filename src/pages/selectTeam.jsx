@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 import "../App.css";
 
-class GetFixtures extends React.Component {
+class SelectTeam extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -90,7 +90,7 @@ class GetFixtures extends React.Component {
       return <div>Loading...</div>;
     } else {
       return (
-        <div className="GetFixtures">
+        <div className="SelectTeam">
           <h1>This Weeks Fixtures</h1>
           <ul>
             {fixes.map((fixture) => (
@@ -142,4 +142,4 @@ class GetFixtures extends React.Component {
   }
 }
 
-export default GetFixtures;
+export default SelectTeam;

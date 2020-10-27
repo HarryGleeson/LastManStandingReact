@@ -35,6 +35,31 @@ app.post("/api/insert", (req, res) => {
   });
 });
 
+app.post("/api/register", (req, res) => {
+  const username = req.body.username;
+  const password = req.body.password;
+  const sqlInsert = "INSERT INTO Users (username, password) VALUES (?, ?)";
+  db.query(sqlInsert, [username, password], (err, result) => {
+    console.log(err);
+  });
+});
+
+app.post("/api/login", (req, res) => {
+  const username = req.body.username;
+  const password = req.body.password;
+  const sqlSelect = "SELECT * FROM Users WHERE username = ? AND password = ?";
+  db.query(sqlSelect, [username, password], (err, result) => {
+    if (err) {
+      res.send({ err: err });
+    }
+    if (result.length > 0) {
+      res.send(result);
+    } else {
+      res.send({ message: "Wrong username/password combination" });
+    }
+  });
+});
+
 app.listen(3001, () => {
   console.log("Running on port 3001");
 });

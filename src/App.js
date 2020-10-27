@@ -9,7 +9,8 @@ import {
 } from "react-router-dom";
 
 //Pages
-import GetFixtures from "./pages/index";
+import Login from "./pages/login";
+import Select from "./pages/selectTeam";
 import Submit from "./pages/submit";
 import NotFoundPage from "./pages/404";
 
@@ -18,7 +19,8 @@ function App() {
     <div className="app">
       <Router>
         <Switch>
-          <Route exact path="/" component={GetFixtures} />
+          <Route exact path="/" component={Login} />
+          <Route exact path="/select" component={Select} />
           <Route exact path="/submit" component={Submit} />
           <Route exact path="/404" component={NotFoundPage} />
           <Redirect to="/404" />
