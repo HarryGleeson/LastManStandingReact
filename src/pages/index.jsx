@@ -19,7 +19,9 @@ class GetFixtures extends React.Component {
 
   componentDidMount() {
     const week = 7;
-    const url = `https://livescore-api.com/api-client/fixtures/matches.json?competition_id=2&round=${week}&key=pRzsdYttAIYZCtvl&secret=p1eh5O8oqpcDmtaLkJdyIH2jp1i2vNoU`;
+    const key = process.env.REACT_APP_API_KEY;
+    const secret = process.env.REACT_APP_API_SECRET_KEY;
+    const url = `https://cors-anywhere.herokuapp.com/livescore-api.com/api-client/fixtures/matches.json?competition_id=2&round=${week}&key=${key}&secret=${secret}`;
     fetch(url)
       .then((res) => res.json())
       .then((json) => {
@@ -29,7 +31,14 @@ class GetFixtures extends React.Component {
         });
       })
       .then(() => {
+        let homeSelected = 0;
+        let awaySelected = 0;
         this.state.fixtureList.forEach((fixture) => {
+          let toBeReversed = false;
+          if (fixture.home_name > fixture.away_name) {
+            //database query returns teams in alphabetical order, need to reverse if away team first in alphabet
+            toBeReversed = true;
+          }
           Axios.get("http://localhost:3001/api/get", {
             params: {
               homeName: fixture.home_name,
@@ -37,9 +46,16 @@ class GetFixtures extends React.Component {
             },
           })
             .then((response) => {
+              if (toBeReversed) {
+                homeSelected = response.data[1].beenSelected;
+                awaySelected = response.data[0].beenSelected;
+              } else {
+                homeSelected = response.data[0].beenSelected;
+                awaySelected = response.data[1].beenSelected;
+              }
               this.setState({
-                hasBeenSelectedHome: response.data[0].beenSelected,
-                hasBeenSelectedAway: response.data[1].beenSelected,
+                hasBeenSelectedHome: homeSelected,
+                hasBeenSelectedAway: awaySelected,
               });
             })
             .then(() => {
