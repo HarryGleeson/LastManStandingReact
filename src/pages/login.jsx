@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import { Redirect, Route, Link } from "react-router-dom";
+import React, { useEffect } from "react";
 import "../App.css";
 import Axios from "axios";
-import SelectTeam from "./selectTeam";
+
+Axios.defaults.withCredentials = true;
 
 class Login extends React.Component {
   constructor(props) {
@@ -15,7 +15,6 @@ class Login extends React.Component {
       loginStatus: "",
     };
   }
-
   register = () => {
     Axios.post("http://localhost:3001/api/register", {
       username: this.state.usernameReg,
@@ -33,9 +32,17 @@ class Login extends React.Component {
       if (response.data.message) {
         this.setState({ loginStatus: response.data.message });
       } else {
-        console.log("HERE!");
-        this.props.history.push("/select");
+        this.props.history.push({
+          pathname: "/select",
+          state: { username: this.state.username },
+        });
       }
+    });
+  };
+
+  useEffect = () => {
+    Axios.get("https://localhost:3001/login").then((response) => {
+      console.log(response);
     });
   };
 

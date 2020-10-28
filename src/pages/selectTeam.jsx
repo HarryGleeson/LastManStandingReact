@@ -91,6 +91,7 @@ class SelectTeam extends React.Component {
     } else {
       return (
         <div className="SelectTeam">
+          <p>Welcome {this.props.location.state.username}</p>
           <h1>This Weeks Fixtures</h1>
           <ul>
             {fixes.map((fixture) => (
