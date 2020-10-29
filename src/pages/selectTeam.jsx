@@ -14,6 +14,7 @@ class SelectTeam extends React.Component {
       hasBeenSelectedHome: 0,
       hasBeenSelectedAway: 0,
       fixes: [],
+      username: this.props.location.state.username,
     };
   }
 
@@ -47,11 +48,11 @@ class SelectTeam extends React.Component {
           })
             .then((response) => {
               if (toBeReversed) {
-                homeSelected = response.data[1].beenSelected;
-                awaySelected = response.data[0].beenSelected;
+                homeSelected = response.data[1][this.state.username];
+                awaySelected = response.data[0][this.state.username];
               } else {
-                homeSelected = response.data[0].beenSelected;
-                awaySelected = response.data[1].beenSelected;
+                homeSelected = response.data[0][this.state.username];
+                awaySelected = response.data[1][this.state.username];
               }
               this.setState({
                 hasBeenSelectedHome: homeSelected,
@@ -77,8 +78,8 @@ class SelectTeam extends React.Component {
 
   submitTeam = () => {
     Axios.post("http://localhost:3001/api/insert", {
+      username: this.props.location.state.username,
       teamName: this.state.currentSelection,
-      beenSelected: 1,
     }).then(() => {
       alert("successful insert");
     });
@@ -91,7 +92,7 @@ class SelectTeam extends React.Component {
     } else {
       return (
         <div className="SelectTeam">
-          <p>Welcome {this.props.location.state.username}</p>
+          <p>Welcome {this.state.username}</p>
           <h1>This Weeks Fixtures</h1>
           <ul>
             {fixes.map((fixture) => (

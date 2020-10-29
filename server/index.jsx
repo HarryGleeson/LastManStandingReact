@@ -41,6 +41,7 @@ app.use(
 );
 
 app.get("/api/get", (req, res) => {
+  //QUERY TEAMS DATABASE TO DETERMINE IF TEAMS HAVE BEEN SELECTED
   const homeName = req.query.homeName;
   const awayName = req.query.awayName;
   const sqlSelect = "SELECT * FROM Teams WHERE teamName = ? OR teamName = ?";
@@ -50,18 +51,26 @@ app.get("/api/get", (req, res) => {
 });
 
 app.post("/api/insert", (req, res) => {
+  //ALTER TEAMS DATABASE TO SIGNIFY THAT TEAM HAS BEEN SELECTED
+  const username = req.body.username;
+  const set = req.body.set;
   const teamName = req.body.teamName;
-  const beenSelected = req.body.beenSelected;
 
-  const sqlUpdate = "UPDATE Teams SET beenSelected = ? WHERE teamName = ?;";
-  db.query(sqlUpdate, [beenSelected, teamName], (err, result) => {
+  const sqlUpdate = `UPDATE Teams SET ${username} = 1 WHERE teamName = ?;`;
+  db.query(sqlUpdate, [teamName], (err, result) => {
     console.log(err);
   });
 });
 
 app.post("/api/register", (req, res) => {
+  //INSERT NEW USER AND PASSWORD INTO USER DATABASE AND USERNAME COLUMN INTO TEAMS DATABASE
   const username = req.body.username;
   const password = req.body.password;
+
+  const sqlAlter = `ALTER TABLE Teams ADD ${username} tinyint NOT NULL DEFAULT (0)`;
+  db.query(sqlAlter, (err, result) => {
+    console.log(err);
+  });
 
   bcrypt.hash(password, saltRounds, (err, hash) => {
     const sqlInsert = "INSERT INTO Users (username, password) VALUES (?, ?)";
@@ -72,6 +81,7 @@ app.post("/api/register", (req, res) => {
 });
 
 app.post("/api/login", (req, res) => {
+  //QUERY USER DATABASE TO SEE IF USERNAME AND PASSWORD PRESENT
   const username = req.body.username;
   const password = req.body.password;
   const sqlSelect = "SELECT * FROM Users WHERE username = ?";

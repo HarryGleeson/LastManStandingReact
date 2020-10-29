@@ -40,12 +40,6 @@ class Login extends React.Component {
     });
   };
 
-  useEffect = () => {
-    Axios.get("https://localhost:3001/login").then((response) => {
-      console.log(response);
-    });
-  };
-
   render() {
     return (
       <div className="LoginScreen">
