@@ -75,7 +75,7 @@ app.post("/api/register", (req, res) => {
   bcrypt.hash(password, saltRounds, (err, hash) => {
     const sqlInsert = "INSERT INTO Users (username, password) VALUES (?, ?)";
     db.query(sqlInsert, [username, hash], (err, result) => {
-      console.log(err);
+      res.send(result);
     });
   });
 });

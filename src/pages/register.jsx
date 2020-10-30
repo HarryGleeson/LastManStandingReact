@@ -4,29 +4,20 @@ import Axios from "axios";
 
 Axios.defaults.withCredentials = true;
 
-class Login extends React.Component {
+class Register extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      username: "",
-      password: "",
-      loginStatus: "",
+      usernameReg: "",
+      passwordReg: "",
     };
   }
-
-  login = () => {
-    Axios.post("http://localhost:3001/api/login", {
-      username: this.state.username,
-      password: this.state.password,
+  register = () => {
+    Axios.post("http://localhost:3001/api/register", {
+      username: this.state.usernameReg,
+      password: this.state.passwordReg,
     }).then((response) => {
-      if (response.data.message) {
-        this.setState({ loginStatus: response.data.message });
-      } else {
-        this.props.history.push({
-          pathname: "/select",
-          state: { username: this.state.username },
-        });
-      }
+      this.props.history.push("/");
     });
   };
 
@@ -34,14 +25,14 @@ class Login extends React.Component {
     return (
       <div className="LoginRegisterScreen">
         <div className="LoginRegister">
-          <h1>Login</h1>
+          <h1>Registration</h1>
           <form>
             <p>Username</p>
             <input
               type="text"
               placeholder="Enter Username"
               onChange={(e) => {
-                this.setState({ username: e.target.value });
+                this.setState({ usernameReg: e.target.value });
               }}
             />
             <p>Password</p>
@@ -49,22 +40,20 @@ class Login extends React.Component {
               type="password"
               placeholder="Enter Password"
               onChange={(e) => {
-                this.setState({ password: e.target.value });
+                this.setState({ passwordReg: e.target.value });
               }}
             />
           </form>
           <button
-            onClick={this.login}
+            onClick={this.register}
             className="btn btn-secondary btn-sm mr-1 ml-1"
           >
-            Login
+            Register
           </button>
-          <a href="./register">Don't have an account?</a>
         </div>
-        <h3>{this.state.loginStatus}</h3>
       </div>
     );
   }
 }
 
-export default Login;
+export default Register;

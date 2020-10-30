@@ -15,6 +15,84 @@
   margin-top: 4px;
 }
 
+.LoginRegisterScreen {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  background: rgb(95, 167, 190);
+  background-attachment: fixed;
+  overflow: hidden;
+}
+
+.LoginRegister {
+  width: 320px;
+  height: 420px;
+  background: #000;
+  color: #fff;
+  top: 50%;
+  left: 50%;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  box-sizing: border-box;
+  padding: 0px 30px;
+}
+
+.LoginRegisterScreen h1 {
+  margin: 0;
+  padding: 0, 0, 20px;
+  text-align: center;
+  font-size: 22px;
+}
+
+.LoginRegister p {
+  margin: 0;
+  padding: 0;
+  font-weight: bold;
+}
+
+.LoginRegister input {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.LoginRegister input[type="text"],
+input[type="password"] {
+  border: none;
+  border-bottom: 1px solid #fff;
+  background: transparent;
+  outline: none;
+  height: 40px;
+  color: #fff;
+  font-size: 16px;
+}
+
+.LoginRegister button {
+  border: none;
+  outline: none;
+  height: 40px;
+  font-size: 18px;
+  border-radius: 20px;
+  padding-left: 100px;
+  padding-right: 100px;
+}
+
+.LoginRegister button:hover {
+  cursor: pointer;
+  background: #495057;
+  color: #000;
+}
+
+.LoginRegister a {
+  text-decoration: none;
+  font-size: 12px;
+  line-height: 20px;
+  color: darkgrey;
+}
+
+.LoginRegister a:hover {
+  color: #ffc107;
+}
+
 .HomeSelectorButton {
   padding-left: 10px;
   padding-right: 20px;
