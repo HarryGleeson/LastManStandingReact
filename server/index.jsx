@@ -93,8 +93,12 @@ app.post("/api/login", (req, res) => {
     if (result.length > 0) {
       bcrypt.compare(password, result[0].Password, (error, response) => {
         if (response) {
-          req.session.user = result;
-          res.send(result);
+          if (!result[0].stillRemaining) {
+            res.send({ message: "Sorry, you have been eliminated!" });
+          } else {
+            req.session.user = result;
+            res.send(result);
+          }
         } else {
           res.send({ message: "Wrong username/password combination" });
         }

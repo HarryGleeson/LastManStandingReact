@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import "../App.css";
 import Axios from "axios";
 
@@ -54,7 +54,7 @@ class Login extends React.Component {
           />
           <label>Password</label>
           <input
-            type="text"
+            type="password"
             onChange={(e) => {
               this.setState({ passwordReg: e.target.value });
             }}
@@ -77,7 +77,7 @@ class Login extends React.Component {
           />
           <label>Password</label>
           <input
-            type="text"
+            type="password"
             onChange={(e) => {
               this.setState({ password: e.target.value });
             }}
