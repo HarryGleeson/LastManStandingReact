@@ -51,13 +51,19 @@ app.get("/api/get", (req, res) => {
 });
 
 app.post("/api/insert", (req, res) => {
-  //ALTER TEAMS DATABASE TO SIGNIFY THAT TEAM HAS BEEN SELECTED
+  //ALTER TEAMS & USER DATABASE TO SIGNIFY THAT TEAM HAS BEEN SELECTED
   const username = req.body.username;
   const set = req.body.set;
   const teamName = req.body.teamName;
 
-  const sqlUpdate = `UPDATE Teams SET ${username} = 1 WHERE teamName = ?;`;
-  db.query(sqlUpdate, [teamName], (err, result) => {
+  const sqlUpdateUsers =
+    "UPDATE Users SET currentSelection = ? WHERE Username = ?;";
+  db.query(sqlUpdateUsers, [teamName, username], (err, result) => {
+    console.log(err);
+  });
+
+  const sqlUpdateTeams = `UPDATE Teams SET ${username} = 1 WHERE teamName = ?;`;
+  db.query(sqlUpdateTeams, [teamName], (err, result) => {
     console.log(err);
   });
 });

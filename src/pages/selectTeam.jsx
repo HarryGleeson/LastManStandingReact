@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 
 import "../App.css";
 
+var config = require("../config.js");
+
 class SelectTeam extends React.Component {
   constructor(props) {
     super(props);
@@ -16,14 +18,16 @@ class SelectTeam extends React.Component {
       fixes: [],
       username: this.props.location.state.username,
       timeLeft: {},
+      week: 7,
+      fixtureList: [],
     };
   }
 
   componentDidMount() {
-    const week = 8;
+    console.log(config.gameWeek);
     const key = process.env.REACT_APP_API_KEY;
     const secret = process.env.REACT_APP_API_SECRET_KEY;
-    const url = `https://sheltered-stream-75141.herokuapp.com/https://livescore-api.com/api-client/fixtures/matches.json?competition_id=2&round=${week}&key=${key}&secret=${secret}`;
+    const url = `https://sheltered-stream-75141.herokuapp.com/https://livescore-api.com/api-client/fixtures/matches.json?competition_id=2&round=${this.state.week}&key=${key}&secret=${secret}`;
     fetch(url)
       .then((res) => res.json())
       .then((json) => {
@@ -32,6 +36,7 @@ class SelectTeam extends React.Component {
           fixtureList: json.data.fixtures,
         });
       })
+
       .then(() => {
         this.calculateTimeRemaining(
           this.state.fixtureList[0].date,
