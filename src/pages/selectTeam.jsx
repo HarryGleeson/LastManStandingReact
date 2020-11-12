@@ -4,8 +4,6 @@ import { Link } from "react-router-dom";
 
 import "../App.css";
 
-var config = require("../config.js");
-
 class SelectTeam extends React.Component {
   constructor(props) {
     super(props);
@@ -15,28 +13,28 @@ class SelectTeam extends React.Component {
       currentSelection: "",
       hasBeenSelectedHome: 0,
       hasBeenSelectedAway: 0,
+      usersRemaining: 0,
       fixes: [],
       username: this.props.location.state.username,
       timeLeft: {},
-      week: 7,
+      week: 9,
       fixtureList: [],
     };
   }
 
   componentDidMount() {
-    console.log(config.gameWeek);
     const key = process.env.REACT_APP_API_KEY;
     const secret = process.env.REACT_APP_API_SECRET_KEY;
-    const url = `https://sheltered-stream-75141.herokuapp.com/https://livescore-api.com/api-client/fixtures/matches.json?competition_id=2&round=${this.state.week}&key=${key}&secret=${secret}`;
+    // const url = `https://sheltered-stream-75141.herokuapp.com/https://livescore-api.com/api-client/fixtures/matches.json?competition_id=2&round=${this.state.week}&key=${key}&secret=${secret}`;
+    const url = `http://localhost:5000/api/fixtures/${this.state.week}`;
     fetch(url)
       .then((res) => res.json())
       .then((json) => {
         this.setState({
           isLoaded: true,
-          fixtureList: json.data.fixtures,
+          fixtureList: json,
         });
       })
-
       .then(() => {
         this.calculateTimeRemaining(
           this.state.fixtureList[0].date,
@@ -81,6 +79,15 @@ class SelectTeam extends React.Component {
                   hasBeenSelectedAway: this.state.hasBeenSelectedAway,
                 }),
               });
+            })
+            .then(() => {
+              Axios.get("http://localhost:3001/api/getUsers").then(
+                (response) => {
+                  this.setState({
+                    usersRemaining: response.data[0]["COUNT (*)"],
+                  });
+                }
+              );
             });
         });
       });
@@ -112,13 +119,26 @@ class SelectTeam extends React.Component {
   };
 
   render() {
-    var { isLoaded, fixes, currentSelection, username, timeLeft } = this.state;
+    var {
+      isLoaded,
+      fixes,
+      currentSelection,
+      username,
+      timeLeft,
+      usersRemaining,
+    } = this.state;
     if (!isLoaded) {
       return <div>Loading...</div>;
     } else {
       return (
         <div className="SelectTeam">
           <p>Welcome {username}</p>
+          <div className="usersRemaining">
+            <div>Users Remaining: </div>
+            <div className="badge badge-pill badge-primary">
+              {usersRemaining}
+            </div>
+          </div>
           <h1>This Weeks Fixtures</h1>
           <p>
             Time Remaining: {timeLeft.days} Days {timeLeft.hours} Hours{" "}

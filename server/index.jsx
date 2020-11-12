@@ -40,6 +40,14 @@ app.use(
   })
 );
 
+app.get("/api/getUsers", (req, res) => {
+  //QUERY TEAMS DATABASE TO DETERMINE HOW MANY USERS ARE LEFT
+  const sqlSelect = "SELECT COUNT (*) FROM Users WHERE stillRemaining = 1";
+  db.query(sqlSelect, (err, result) => {
+    res.send(result);
+  });
+});
+
 app.get("/api/get", (req, res) => {
   //QUERY TEAMS DATABASE TO DETERMINE IF TEAMS HAVE BEEN SELECTED
   const homeName = req.query.homeName;
