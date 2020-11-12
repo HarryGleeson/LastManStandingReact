@@ -22,10 +22,17 @@ class Login extends React.Component {
       if (response.data.message) {
         this.setState({ loginStatus: response.data.message });
       } else {
-        this.props.history.push({
-          pathname: "/select",
-          state: { username: this.state.username },
-        });
+        if (response.data[0].stillRemaining === 1) {
+          this.props.history.push({
+            pathname: "/select",
+            state: { username: this.state.username },
+          });
+        } else {
+          this.setState({
+            loginStatus:
+              "Sorry, you have been eliminated! Better luck next time!",
+          });
+        }
       }
     });
   };
@@ -60,8 +67,8 @@ class Login extends React.Component {
             Login
           </button>
           <a href="./register">Don't have an account?</a>
+          <h3>{this.state.loginStatus}</h3>
         </div>
-        <h3>{this.state.loginStatus}</h3>
       </div>
     );
   }
