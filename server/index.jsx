@@ -40,10 +40,29 @@ app.use(
   })
 );
 
-app.get("/api/getUsers", (req, res) => {
+app.get("/api/getUserCount", (req, res) => {
   //QUERY TEAMS DATABASE TO DETERMINE HOW MANY USERS ARE LEFT
   const sqlSelect = "SELECT COUNT (*) FROM Users WHERE stillRemaining = 1";
   db.query(sqlSelect, (err, result) => {
+    res.send(result);
+  });
+});
+
+app.get("/api/getUsers", (req, res) => {
+  //QUERY TEAMS DATABASE TO RETRIEVE USERNAME AND SELECTION TO COMMMIT TO TEAMS DATABASE
+  const sqlSelect =
+    "SELECT Username, currentSelection, selectionVenue FROM Users;";
+  db.query(sqlSelect, (err, result) => {
+    res.send(result);
+  });
+});
+
+app.get("/api/getResult", (req, res) => {
+  //QUERY RESULTS DATABASE TO DETERMINE RESULT FOR MATCH CONTAINING GIVEN TEAM
+  const venue = req.query.venue;
+  const team = req.query.team;
+  const sqlSelect = `SELECT result FROM Fixtures.Results WHERE ${venue} = ?`;
+  db.query(sqlSelect, [team], (err, result) => {
     res.send(result);
   });
 });
@@ -58,21 +77,44 @@ app.get("/api/get", (req, res) => {
   });
 });
 
-app.post("/api/insert", (req, res) => {
-  //ALTER TEAMS & USER DATABASE TO SIGNIFY THAT TEAM HAS BEEN SELECTED
-  const username = req.body.username;
-  const set = req.body.set;
+app.post("/api/insertCurrentSelection", (req, res) => {
+  //ALTER USER DATABASE TO SIGNIFY THAT TEAM IS THE CURRENT SELECTION, NOT FINAL UNTIL PICK DEADLINE
   const teamName = req.body.teamName;
+  const venue = req.body.venue;
+  const username = req.body.username;
 
   const sqlUpdateUsers =
-    "UPDATE Users SET currentSelection = ? WHERE Username = ?;";
-  db.query(sqlUpdateUsers, [teamName, username], (err, result) => {
-    console.log(err);
+    "UPDATE Users SET currentSelection = ?, selectionVenue = ? WHERE Username = ?;";
+  db.query(sqlUpdateUsers, [teamName, venue, username], (err, result) => {
+    if (err) {
+      console.log(err);
+    }
   });
+});
+
+app.post("/api/eliminateUser", (req, res) => {
+  //ALTER USER DATABASE TO SIGNIFY THAT USER HAS BEEN ELIMINATED
+  const username = req.body.username;
+  console.log("Eliminating: " + username);
+  const sqlUpdateTeams =
+    "UPDATE Users SET stillRemaining = 0 WHERE username = ?;";
+  db.query(sqlUpdateTeams, [username], (err, result) => {
+    if (err) {
+      console.log(err);
+    }
+  });
+});
+
+app.post("/api/insertFinalSelection", (req, res) => {
+  //ALTER TEAM DATABASE TO SIGNIFY THAT CURRENT SELECTION IS USERS FINAL SELECTION
+  const username = req.body.username;
+  const teamName = req.body.teamName;
 
   const sqlUpdateTeams = `UPDATE Teams SET ${username} = 1 WHERE teamName = ?;`;
   db.query(sqlUpdateTeams, [teamName], (err, result) => {
-    console.log(err);
+    if (err) {
+      console.log(err);
+    }
   });
 });
 
@@ -83,7 +125,9 @@ app.post("/api/register", (req, res) => {
 
   const sqlAlter = `ALTER TABLE Teams ADD ${username} tinyint NOT NULL DEFAULT (0)`;
   db.query(sqlAlter, (err, result) => {
-    console.log(err);
+    if (err) {
+      console.log(err);
+    }
   });
 
   bcrypt.hash(password, saltRounds, (err, hash) => {

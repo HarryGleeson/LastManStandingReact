@@ -11,6 +11,7 @@ class SelectTeam extends React.Component {
       items: [],
       isLoaded: false,
       currentSelection: "",
+      currentSelectionVenue: "",
       hasBeenSelectedHome: 0,
       hasBeenSelectedAway: 0,
       usersRemaining: 0,
@@ -19,12 +20,13 @@ class SelectTeam extends React.Component {
       timeLeft: {},
       week: 9,
       fixtureList: [],
+      finished: false,
     };
   }
 
   componentDidMount() {
-    const key = process.env.REACT_APP_API_KEY;
-    const secret = process.env.REACT_APP_API_SECRET_KEY;
+    //const key = process.env.REACT_APP_API_KEY;
+    //const secret = process.env.REACT_APP_API_SECRET_KEY;
     // const url = `https://sheltered-stream-75141.herokuapp.com/https://livescore-api.com/api-client/fixtures/matches.json?competition_id=2&round=${this.state.week}&key=${key}&secret=${secret}`;
     const url = `http://localhost:5000/api/fixtures/${this.state.week}`;
     fetch(url)
@@ -37,8 +39,8 @@ class SelectTeam extends React.Component {
       })
       .then(() => {
         this.calculateTimeRemaining(
-          this.state.fixtureList[0].date,
-          this.state.fixtureList[0].time
+          this.state.fixtureList[0],
+          this.state.fixtureList[this.state.fixtureList.length - 1]
         );
         let homeSelected = 0;
         let awaySelected = 0;
@@ -81,7 +83,7 @@ class SelectTeam extends React.Component {
               });
             })
             .then(() => {
-              Axios.get("http://localhost:3001/api/getUsers").then(
+              Axios.get("http://localhost:3001/api/getUserCount").then(
                 (response) => {
                   this.setState({
                     usersRemaining: response.data[0]["COUNT (*)"],
@@ -93,10 +95,14 @@ class SelectTeam extends React.Component {
       });
   }
 
-  calculateTimeRemaining = (firstFixtureDate, firstFixtureTime) => {
-    let firstFixture = firstFixtureDate.concat("T", firstFixtureTime);
-
-    let difference = +new Date(firstFixture) - +new Date();
+  calculateTimeRemaining = (firstFixture, lastFixture) => {
+    let firstFixtureString = firstFixture.date.concat("T", firstFixture.time);
+    let lastFixtureString = lastFixture.date.concat("T", lastFixture.time);
+    let currentDate = new Date(Date.parse("2020-11-21T13:00:00"));
+    //let currentDate = new Date();
+    let firstFixtureDate = new Date(firstFixtureString);
+    //Hard coding date after deadline for testing
+    let difference = firstFixtureDate - currentDate;
     if (difference > 0) {
       this.setState({
         timeLeft: {
@@ -106,13 +112,28 @@ class SelectTeam extends React.Component {
           seconds: Math.floor((difference / 1000) % 60),
         },
       });
+    } else {
+      let lastFixtureDate = new Date(lastFixtureString);
+      //checks if final fixture has concluded
+      if (lastFixtureDate - currentDate < 0) {
+        this.setState({ finished: true });
+      }
+      this.props.history.push({
+        pathname: "/results",
+        state: {
+          week: this.state.week,
+          finished: this.state.finished,
+        },
+      });
     }
   };
 
   submitTeam = () => {
-    Axios.post("http://localhost:3001/api/insert", {
-      username: this.props.location.state.username,
+    //Sets current selection of a user in user database, not made final until deadline
+    Axios.post("http://localhost:3001/api/insertCurrentSelection", {
       teamName: this.state.currentSelection,
+      venue: this.state.currentSelectionVenue,
+      username: this.props.location.state.username,
     }).then(() => {
       alert("successful insert");
     });
@@ -150,7 +171,10 @@ class SelectTeam extends React.Component {
                 {fixture.date} - {fixture.time}
                 <button
                   onClick={() => {
-                    this.setState({ currentSelection: fixture.home_name });
+                    this.setState({
+                      currentSelection: fixture.home_name,
+                      currentSelectionVenue: "home",
+                    });
                   }}
                   className="btn btn-secondary btn-sm mr-1 ml-1"
                   disabled={fixture.hasBeenSelectedHome}
@@ -160,7 +184,10 @@ class SelectTeam extends React.Component {
                 vs
                 <button
                   onClick={() => {
-                    this.setState({ currentSelection: fixture.away_name });
+                    this.setState({
+                      currentSelection: fixture.away_name,
+                      currentSelectionVenue: "away",
+                    });
                   }}
                   className="btn btn-secondary btn-sm mr-1 ml-1"
                   disabled={fixture.hasBeenSelectedAway}
