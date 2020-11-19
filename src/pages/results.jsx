@@ -10,6 +10,7 @@ class Results extends React.Component {
       //finished: this.props.location.state.gameWeekFinished,
       finished: true,
       users: [],
+      userResults: [],
     };
   }
 
@@ -19,16 +20,15 @@ class Results extends React.Component {
         this.setState({ users: response.data });
       })
       .then(() => {
-        var finished = this.state.finished;
-        if (finished) {
+        if (this.state.finished) {
           this.processResults();
         }
+
         for (var i = 0; i < this.state.users.length; i++) {
           Axios.post("http://localhost:3001/api/insertFinalSelection", {
             username: this.state.users[i]["Username"],
             teamName: this.state.users[i]["currentSelection"],
           }).then(() => {
-            console.log("Successful insert");
             alert("successful insert");
           });
         }
@@ -48,11 +48,11 @@ class Results extends React.Component {
           (this.state.users[n]["selectionVenue"] === "home" && result !== 1) ||
           (this.state.users[n]["selectionVenue"] === "away" && result !== 2)
         ) {
-          console.log("Eliminating: " + this.state.users[n]["Username"]);
+          console.log("Eliminating:" + this.state.users[n]["Username"]);
           Axios.post("http://localhost:3001/api/eliminateUser", {
             username: this.state.users[n]["Username"],
-          }).then(() => {
-            alert("successful insert");
+          }).then((response) => {
+            console.log(response);
           });
         }
       });

@@ -71,6 +71,7 @@ app.get("/api/get", (req, res) => {
   //QUERY TEAMS DATABASE TO DETERMINE IF TEAMS HAVE BEEN SELECTED
   const homeName = req.query.homeName;
   const awayName = req.query.awayName;
+
   const sqlSelect = "SELECT * FROM Teams WHERE teamName = ? OR teamName = ?";
   db.query(sqlSelect, [homeName, awayName], (err, result) => {
     res.send(result);
@@ -98,11 +99,11 @@ app.post("/api/eliminateUser", (req, res) => {
   console.log("Eliminating: " + username);
   const sqlUpdateTeams =
     "UPDATE Users SET stillRemaining = 0 WHERE username = ?;";
-  db.query(sqlUpdateTeams, [username], (err, result) => {
+  /* db.query(sqlUpdateTeams, [username], (err, result) => {
     if (err) {
       console.log(err);
     }
-  });
+  });*/
 });
 
 app.post("/api/insertFinalSelection", (req, res) => {

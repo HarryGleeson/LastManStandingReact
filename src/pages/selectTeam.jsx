@@ -97,35 +97,19 @@ class SelectTeam extends React.Component {
 
   calculateTimeRemaining = (firstFixture, lastFixture) => {
     let firstFixtureString = firstFixture.date.concat("T", firstFixture.time);
-    let lastFixtureString = lastFixture.date.concat("T", lastFixture.time);
     let currentDate = new Date(Date.parse("2020-11-21T13:00:00"));
     //let currentDate = new Date();
     let firstFixtureDate = new Date(firstFixtureString);
     //Hard coding date after deadline for testing
     let difference = firstFixtureDate - currentDate;
-    if (difference > 0) {
-      this.setState({
-        timeLeft: {
-          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-          minutes: Math.floor((difference / 1000 / 60) % 60),
-          seconds: Math.floor((difference / 1000) % 60),
-        },
-      });
-    } else {
-      let lastFixtureDate = new Date(lastFixtureString);
-      //checks if final fixture has concluded
-      if (lastFixtureDate - currentDate < 0) {
-        this.setState({ finished: true });
-      }
-      this.props.history.push({
-        pathname: "/results",
-        state: {
-          week: this.state.week,
-          finished: this.state.finished,
-        },
-      });
-    }
+    this.setState({
+      timeLeft: {
+        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+        minutes: Math.floor((difference / 1000 / 60) % 60),
+        seconds: Math.floor((difference / 1000) % 60),
+      },
+    });
   };
 
   submitTeam = () => {

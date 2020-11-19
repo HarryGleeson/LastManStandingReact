@@ -11,6 +11,8 @@ class Login extends React.Component {
       username: "",
       password: "",
       loginStatus: "",
+      gameWeek: 9,
+      finished: true,
     };
   }
 
@@ -23,10 +25,17 @@ class Login extends React.Component {
         this.setState({ loginStatus: response.data.message });
       } else {
         if (response.data[0].stillRemaining === 1) {
-          this.props.history.push({
-            pathname: "/select",
-            state: { username: this.state.username },
-          });
+          if (this.state.finished) {
+            this.props.history.push({
+              pathname: "/results",
+              state: { week: this.state.gameWeek },
+            });
+          } else {
+            this.props.history.push({
+              pathname: "/select",
+              state: { username: this.state.username },
+            });
+          }
         } else {
           this.setState({
             loginStatus:
